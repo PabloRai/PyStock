@@ -150,7 +150,7 @@ def doML(ticker):
 	print()
 	print()
 tickers = getSavedData(True)
-#loadData()
+readData()
 doML('APBR.BA')
 doML('EDN.BA')
 doML('BMA.BA')
