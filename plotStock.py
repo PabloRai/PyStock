@@ -12,6 +12,7 @@ import numpy as np
 from collections import Counter
 from sklearn import svm, cross_validation, neighbors
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier
+from _datetime import datetime
 
 style.use('ggplot')
 
@@ -34,8 +35,8 @@ def getSavedData(reload=False):
 	else:
 		with open("stocks.pickle","rb") as f:
 			tickers = pickle.load(f)
-	start = dt.datetime(2017,7,1)
-	end = dt.datetime(2017,8,2)
+	start = dt.datetime(2010,1,1)
+	end = dt.datetime(datetime.now().year,datetime.now().month,int((dt.date.today() - dt.timedelta(days=1)).strftime('%d')))
 	if not os.path.exists('stocks'):
 		os.makedirs('stocks')
 	for ticker in tickers:
@@ -48,6 +49,7 @@ def getSavedData(reload=False):
 			print("Already have {}".format(ticker))
 	print()
 	print()
+	return tickers
 
 def loadData():
 	with open("stocks.pickle","rb") as f:
@@ -64,7 +66,7 @@ def loadData():
 			mainDf = mainDf.join(df, how='outer')
 		if count % 10 == 0:
 			print(count)
-	print(mainDf.head())
+	
 	mainDf.to_csv('StocksUnidas.csv')
 
 def readData():
@@ -100,7 +102,7 @@ def processData(ticker):
 	return tickers, df
 def buy_sell_hold(*args):
 	cols = [c for c in args]
-	requirement = 0.02
+	requirement = 0.005
 	for col in cols:
 		if col > requirement:
 			return 1
@@ -149,9 +151,8 @@ def doML(ticker):
 	print('predicted class counts:',Counter(predictions))
 	print()
 	print()
-tickers = getSavedData(True)
-readData()
-doML('APBR.BA')
-doML('EDN.BA')
-doML('BMA.BA')
+tickers = getSavedData(False)
+#loadData()
+for ticker in tickers:
+	doML(ticker)
 
